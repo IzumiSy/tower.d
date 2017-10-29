@@ -1,15 +1,20 @@
 import std.stdio;
 import std.socket;
+import std.getopt;
 
-void main() {
+void main(string[] args) {
   ushort port = 3000;
   auto listener = new TcpSocket();
-
-  writeln("Listening on port ", port);
 
   listener.blocking = true;
   listener.bind(new InternetAddress(port));
   listener.listen(1);
+
+  auto arguments = getopt(
+    args, "port", &port
+  );
+
+  writeln("Listening on port ", port);
 
   ubyte[] data = cast(ubyte[])"HTTP/1.1 200 OK
 
