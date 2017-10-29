@@ -1,9 +1,12 @@
 {
-	"name": "tower",
-	"authors": [
-		"IzumiSy"
-	],
-	"description": "Dlang based web-server",
-	"copyright": "Copyright © 2017, IzumiSy",
-	"license": "MIT"
+  "name": "tower",
+  "authors": [
+    "IzumiSy"
+  ],
+  "description": "Dlang based web-server",
+  "copyright": "Copyright © 2017, IzumiSy",
+  "license": "MIT",
+  "dependencies":  {
+    "consoled": "~>1.0.4"
+  }
 }
