@@ -3,6 +3,7 @@ import std.socket;
 import std.getopt;
 import std.utf;
 import std.string;
+import std.parallelism;
 import consoled;
 
 struct Request {
@@ -27,16 +28,21 @@ class Logger {
 }
 
 class RequestHandler {
+  immutable long REQUEST_PAYLOAD_SIZE = 1024;
+
   immutable ushort METHOD = 0;
   immutable ushort PATH = 1;
   immutable ushort VERSION = 2;
 
   Request request;
   Logger logger;
+  Socket _client;
 
   this(Socket client) {
+    _client = client;
+
     auto _request = new ubyte[REQUEST_PAYLOAD_SIZE];
-    client.receive(_request);
+    _client.receive(_request);
 
     auto payload = (cast(string)_request).split();
     request.method = payload[METHOD];
@@ -47,37 +53,62 @@ class RequestHandler {
   }
 
   void handle() {
+    ubyte[] data = cast(ubyte[])"HTTP/1.1 200 OK
+
+    <html><body>Hello World!</body></html>";
+
+    //
+    // TODO
+    //
+
+    _client.send(data);
+  }
+
+  void finish() {
     logger.output();
+    _client.close();
   }
 }
 
-immutable long REQUEST_PAYLOAD_SIZE = 1024;
-immutable ushort DEFAULT_PORT = 3000;
+struct TowerOpts {
+  ushort port = 3000;
+  int backlog = 1;
+}
+
+class Tower {
+  TcpSocket listener;
+  TowerOpts _opts;
+
+  this(TowerOpts opts) {
+    listener = new TcpSocket();
+    listener.blocking = true;
+    listener.bind(new InternetAddress(opts.port));
+    listener.listen(opts.backlog);
+
+    _opts = opts;
+  }
+
+  void requestHandlingLoop() {
+    while (true) {
+      auto client = listener.accept();
+      RequestHandler req = new RequestHandler(client);
+      req.handle();
+      req.finish();
+    }
+  }
+
+  TowerOpts start() {
+    task(&requestHandlingLoop).executeInNewThread();
+    return _opts;
+  }
+}
 
 void main(string[] args) {
-  ushort port = DEFAULT_PORT;
-  auto listener = new TcpSocket();
+  TowerOpts opts;
+  opts.backlog = 10;
 
-  listener.blocking = true;
-  listener.bind(new InternetAddress(port));
-  listener.listen(1);
+  Tower server = new Tower(opts);
+  server.start();
 
-  auto arguments = getopt(
-    args, "port", &port
-  );
-
-  writeln("Listening on port ", port);
-
-  ubyte[] data = cast(ubyte[])"HTTP/1.1 200 OK
-
-  <html><body>Hello World!</body></html>";
-
-  while (true) {
-    auto client = listener.accept();
-    RequestHandler req = new RequestHandler(client);
-    req.handle();
-
-    client.send(data);
-    client.close();
-  }
+  writeln("Listening on port ", opts.port);
 }
