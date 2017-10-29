@@ -1,0 +1,9 @@
+{
+	"name": "tower",
+	"authors": [
+		"IzumiSy"
+	],
+	"description": "Dlang based web-server",
+	"copyright": "Copyright © 2017, IzumiSy",
+	"license": "MIT"
+}
