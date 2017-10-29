@@ -1,9 +1,13 @@
 import std.stdio;
 import std.socket;
 import std.getopt;
+import std.utf;
+
+immutable long REQUEST_PAYLOAD_SIZE = 1024;
+immutable ushort DEFAULT_PORT = 3000;
 
 void main(string[] args) {
-  ushort port = 3000;
+  ushort port = DEFAULT_PORT;
   auto listener = new TcpSocket();
 
   listener.blocking = true;
@@ -20,11 +24,11 @@ void main(string[] args) {
 
   <html><body>Hello World!</body></html>";
 
-  auto request = new ubyte[1024];
+  auto requestPayload = new ubyte[REQUEST_PAYLOAD_SIZE];
 
   while (true) {
     auto client = listener.accept();
-    client.receive(request);
+    client.receive(requestPayload);
     client.send(data);
     client.close();
   }
