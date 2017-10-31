@@ -4,4 +4,12 @@ __dummy.html
 *.o
 *.obj
 __test__*__
-tower
+libtower.a
+
+example/.dub
+example/docs.json
+example/__dummy.html
+example/*.o
+example/*.obj
+example/__test__*__
+example/tower_example
