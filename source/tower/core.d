@@ -27,7 +27,6 @@ class Tower {
   private TowerOpts opts;
   private Connection[] connections;
 
-
   this(TowerOpts opts) {
     listener = new TcpSocket();
     listener.blocking = true;
