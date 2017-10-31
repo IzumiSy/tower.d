@@ -1,7 +1,12 @@
 # tower.d
 > Dlang based web-server
 
-## Run
+## Build
 ```
-$ dub run
+$ dub
+```
+
+## Run example
+```
+$ cd example && dub run
 ```
