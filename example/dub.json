@@ -1,0 +1,14 @@
+{
+	"name": "tower_example",
+	"authors": [
+		"IzumiSy"
+	],
+	"description": "A example app for tower.d",
+	"copyright": "Copyright © 2017, IzumiSy",
+	"license": "MIT",
+  "dependencies": {
+    "tower": {
+      "path": "../"
+    }
+  }
+}
