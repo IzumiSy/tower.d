@@ -19,7 +19,7 @@ extern (C) {
 struct TowerOpts {
   ushort port = 3000;
   uint backlog = 1;
-  uint maxConnections = 512;
+  uint maxConnections = 1024;
 }
 
 class Tower {
