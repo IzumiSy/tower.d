@@ -14,13 +14,13 @@ class RequestHandler {
 
   private Request request;
   private Logger logger;
-  private Socket _client;
+  private Socket client;
 
   this(Socket client) {
-    _client = client;
+    client = client;
 
     auto _request = new ubyte[REQUEST_PAYLOAD_SIZE];
-    _client.receive(_request);
+    client.receive(_request);
 
     auto payload = (cast(string)_request).split();
     request.method = payload[METHOD];
@@ -39,11 +39,11 @@ class RequestHandler {
     // TODO
     //
 
-    _client.send(data);
+    client.send(data);
   }
 
   void finish() {
     logger.output();
-    _client.close();
+    client.close();
   }
 }

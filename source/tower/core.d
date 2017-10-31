@@ -2,13 +2,15 @@ module tower.core;
 
 import std.stdio;
 import std.parallelism;
+import std.concurrency;
 import std.socket;
+import core.thread;
 import core.stdc.stdlib;
 import core.sys.posix.signal;
-import tower.requestHandler;
+import tower.connection;
 
 extern (C) {
-  void cleanup(int _signal) {
+  private void cleanup(int _signal) {
     writeln("The server is shutting down...");
     exit(-1);
   }
@@ -16,12 +18,15 @@ extern (C) {
 
 struct TowerOpts {
   ushort port = 3000;
-  int backlog = 1;
+  uint backlog = 1;
+  uint maxConnections = 512;
 }
 
 class Tower {
-  TcpSocket listener;
-  TowerOpts _opts;
+  private TcpSocket listener;
+  private TowerOpts opts;
+  private Connection[] connectioncs;
+
 
   this(TowerOpts opts) {
     listener = new TcpSocket();
@@ -29,21 +34,25 @@ class Tower {
     listener.bind(new InternetAddress(opts.port));
     listener.listen(opts.backlog);
 
-    _opts = opts;
+    opts = opts;
   }
 
   private void requestHandlingLoop() {
+    for (size_t i = 0; i < opts.maxConnections; ++i) {
+      connections ~= new Connection(thisTid);
+    }
+
     while (true) {
-      auto client = listener.accept();
-      RequestHandler req = new RequestHandler(client);
-      req.handle();
-      req.finish();
+      foreach (ref connection; connectionc) {
+        receiveOnly!ConnectionReady;
+        send(connection.getId(), cast(shared)listener);
+      }
+      Thread.sleep(dur!("msecs")(500));
     }
   }
 
-  TowerOpts start() {
+  void start() {
     sigset(SIGINT, &cleanup);
     task(&requestHandlingLoop).executeInNewThread();
-    return _opts;
   }
 }

@@ -4,10 +4,10 @@ import consoled;
 import tower.request;
 
 class Logger {
-  Request _request;
+  Request request;
 
   this(Request request) {
-    _request = request;
+    request = request;
   }
 
   void output() {
