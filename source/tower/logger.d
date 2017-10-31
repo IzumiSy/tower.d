@@ -7,7 +7,7 @@ class Logger {
   Request request;
 
   this(Request request) {
-    request = request;
+    this.request = request;
   }
 
   void output() {

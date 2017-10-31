@@ -17,12 +17,12 @@ class RequestHandler {
   private Socket client;
 
   this(Socket client) {
-    client = client;
+    this.client = client;
 
-    auto _request = new ubyte[REQUEST_PAYLOAD_SIZE];
-    client.receive(_request);
+    auto requestBody = new ubyte[REQUEST_PAYLOAD_SIZE];
+    this.client.receive(requestBody);
 
-    auto payload = (cast(string)_request).split();
+    auto payload = (cast(string)requestBody).split();
     request.method = payload[METHOD];
     request.path = payload[PATH];
     request.httpVersion = payload[VERSION];
