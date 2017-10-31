@@ -11,8 +11,8 @@ class Logger {
   }
 
   void output() {
-    writecln("Accepted ", Fg.green, _request.method,
-      Fg.white, FontStyle.bold, " ", _request.path);
+    writecln("Accepted ", Fg.green, request.method,
+        Fg.white, FontStyle.bold, " ", request.path);
     resetColors();
     resetFontStyle();
   }

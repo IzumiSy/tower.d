@@ -1,6 +1,5 @@
 module tower.connection;
 
-import std.stdio;
 import std.concurrency;
 import std.socket;
 import core.thread;
@@ -22,7 +21,7 @@ class Connection {
 }
 
 void connectionHandler(Tid parentId) {
-  send(parentId, ConnectionHandlerReady());
+  send(parentId, ConnectionReady());
 
   while (true) {
     receive(

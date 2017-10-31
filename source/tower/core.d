@@ -25,7 +25,7 @@ struct TowerOpts {
 class Tower {
   private TcpSocket listener;
   private TowerOpts opts;
-  private Connection[] connectioncs;
+  private Connection[] connections;
 
 
   this(TowerOpts opts) {
@@ -43,7 +43,7 @@ class Tower {
     }
 
     while (true) {
-      foreach (ref connection; connectionc) {
+      foreach (ref connection; connections) {
         receiveOnly!ConnectionReady;
         send(connection.getId(), cast(shared)listener);
       }
