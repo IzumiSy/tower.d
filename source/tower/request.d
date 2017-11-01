@@ -18,15 +18,15 @@ class Request {
     _httpVersion = payload[VERSION];
   }
 
-  @property string method() immutable {
+  @property string method() {
     return _method;
   }
 
-  @property string path() immutable {
+  @property string path() {
     return _path;
   }
 
-  @property string httpVersion() immutable {
+  @property string httpVersion() {
     return _httpVersion;
   }
 }
