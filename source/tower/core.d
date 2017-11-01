@@ -1,20 +1,9 @@
 module tower.core;
 
-import std.stdio;
 import std.parallelism;
-import std.concurrency;
 import std.socket;
-import core.thread;
-import core.stdc.stdlib;
-import core.sys.posix.signal;
 import tower.connection;
-
-extern (C) {
-  private void cleanup(int _signal) {
-    writeln("The server is shutting down...");
-    exit(-1);
-  }
-}
+import tower.sigint;
 
 struct TowerOpts {
   ushort port = 3000;
@@ -43,7 +32,12 @@ class Tower {
   }
 
   void start() {
-    sigset(SIGINT, &cleanup);
+    setupSigintHandler(cast(shared)this);
     task(&requestHandlingLoop).executeInNewThread();
+  }
+
+  void exit() {
+    listener.shutdown(SocketShutdown.BOTH);
+    listener.close();
   }
 }
