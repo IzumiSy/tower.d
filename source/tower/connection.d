@@ -2,17 +2,18 @@ module tower.connection;
 
 import std.concurrency;
 import std.socket;
-import core.thread;
 import tower.requestHandler;
-
-struct ConnectionReady {};
 
 class Connection {
   private Tid id;
+  shared private Socket socket;
 
-  this(Tid parentId) {
-    parentId = parentId;
-    id = spawn(&connectionHandler, parentId);
+  this(shared Socket client) {
+    this.socket = client;
+  }
+
+  void handle() {
+    id = spawn(&connectionHandler, socket);
   }
 
   Tid getId() {
@@ -20,19 +21,9 @@ class Connection {
   }
 }
 
-void connectionHandler(Tid parentId) {
-  send(parentId, ConnectionReady());
-
-  while (true) {
-    receive(
-      (shared TcpSocket listener) {
-        auto client = (cast()listener).accept();
-        RequestHandler req = new RequestHandler(client);
-        req.handle();
-        req.finish();
-        send(parentId, ConnectionReady());
-      }
-    );
-  }
+void connectionHandler(shared Socket socket) {
+  RequestHandler req = new RequestHandler(cast()socket);
+  req.handle();
+  req.finish();
 }
 

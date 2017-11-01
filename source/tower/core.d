@@ -19,7 +19,6 @@ extern (C) {
 struct TowerOpts {
   ushort port = 3000;
   uint backlog = 1;
-  uint maxConnections = 1024;
 }
 
 class Tower {
@@ -32,21 +31,14 @@ class Tower {
     listener.blocking = true;
     listener.bind(new InternetAddress(opts.port));
     listener.listen(opts.backlog);
-
     opts = opts;
   }
 
   private void requestHandlingLoop() {
-    for (size_t i = 0; i < opts.maxConnections; ++i) {
-      connections ~= new Connection(thisTid);
-    }
-
     while (true) {
-      foreach (ref connection; connections) {
-        receiveOnly!ConnectionReady;
-        send(connection.getId(), cast(shared)listener);
-      }
-      Thread.sleep(dur!("msecs")(500));
+      auto client = listener.accept();
+      auto connection = new Connection(cast(shared)client);
+      connection.handle();
     }
   }
 
