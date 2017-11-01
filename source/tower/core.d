@@ -7,7 +7,7 @@ import tower.sigint;
 
 struct TowerOpts {
   ushort port = 3000;
-  uint backlog = 1;
+  uint backlog = 128;
 }
 
 class Tower {
@@ -15,12 +15,17 @@ class Tower {
   private TowerOpts opts;
   private Connection[] connections;
 
+  this() {
+    TowerOpts _opts;
+    this(_opts);
+  }
+
   this(TowerOpts opts) {
+    this.opts = opts;
     listener = new TcpSocket();
     listener.blocking = true;
-    listener.bind(new InternetAddress(opts.port));
-    listener.listen(opts.backlog);
-    opts = opts;
+    listener.bind(new InternetAddress(this.opts.port));
+    listener.listen(this.opts.backlog);
   }
 
   private void requestHandlingLoop() {
@@ -39,5 +44,9 @@ class Tower {
   void exit() {
     listener.shutdown(SocketShutdown.BOTH);
     listener.close();
+  }
+
+  TowerOpts getOpts() const {
+    return opts;
   }
 }

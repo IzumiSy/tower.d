@@ -3,11 +3,9 @@ import std.stdio;
 import tower.core;
 
 void main(string[] args) {
-  TowerOpts opts;
-  opts.backlog = 10;
-
-  Tower server = new Tower(opts);
+  Tower server = new Tower;
   server.start();
 
+  auto opts = server.getOpts();
   writeln("Listening on port ", opts.port);
 }
